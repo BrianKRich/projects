@@ -13,6 +13,7 @@ func main() {
 
 	// API routes
 	mux.HandleFunc("/api/health", corsMiddleware(healthHandler))
+	mux.HandleFunc("/api/hello", corsMiddleware(helloHandler))
 
 	// Static file server for React build
 	frontendDist := filepath.Join("..", "frontend", "dist")
@@ -40,6 +41,13 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(map[string]string{
 		"status": "ok",
+	})
+}
+
+func helloHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Hello World from Go!",
 	})
 }
 
