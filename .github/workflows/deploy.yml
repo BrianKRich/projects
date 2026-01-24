@@ -58,7 +58,7 @@ jobs:
           rsync -avz \
             -e "ssh -i ~/.ssh/lightsail_key" \
             react-project/backend/server \
-            ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }}:/opt/backend/
+            ${{ secrets.LIGHTSAIL_USER }}@${{ secrets.LIGHTSAIL_HOST }}:/backend/
 
       - name: Restart backend service
         run: |
