@@ -46,7 +46,7 @@ go build -o server main.go  # Build binary
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/health` | GET | Health check |
+| `/health` | GET | Health check |
 
 ## Quick Start
 
