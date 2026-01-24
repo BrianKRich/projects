@@ -14,6 +14,7 @@ func main() {
 	// API routes
 	mux.HandleFunc("/api/health", corsMiddleware(healthHandler))
 	mux.HandleFunc("/api/hello", corsMiddleware(helloHandler))
+	mux.HandleFunc("/health", corsMiddleware(healthHandler))
 
 	// Static file server for React build
 	frontendDist := filepath.Join("..", "frontend", "dist")
