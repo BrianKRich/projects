@@ -62,5 +62,5 @@ jobs:
             cd ~/projects/backend
             nohup ./server > server.log 2>&1 &
             sleep 2
-            curl -s http://localhost:8080/api/health || echo "Health check failed"
+            curl -s http://localhost:8080/health || echo "Health check failed"
           EOF

@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	http.HandleFunc("/api/health", healthHandler)
+	http.HandleFunc("/health", healthHandler)
 	http.HandleFunc("/api/hello", helloHandler)
 
 	// Serve static frontend files

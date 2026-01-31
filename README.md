@@ -42,7 +42,7 @@ The backend API will be available at `http://localhost:8080`
 
 | Endpoint | Method | Description |
 |----------|--------|-------------|
-| `/api/health` | GET | Health check |
+| `/health` | GET | Health check |
 | `/api/hello` | GET | Returns a greeting message |
 
 ## Development
