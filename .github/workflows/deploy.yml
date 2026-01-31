@@ -58,9 +58,17 @@ jobs:
       - name: Restart application
         run: |
           ssh -i ~/.ssh/lightsail.pem ubuntu@${{ secrets.LIGHTSAIL_HOST }} << 'EOF'
+            # Ensure PostgreSQL is running
+            sudo service postgresql start || true
+
+            # Stop existing server
             pkill -f './server' || true
+
+            # Start the server
             cd ~/projects/backend
             nohup ./server > server.log 2>&1 &
             sleep 2
+
+            # Health check
             curl -s http://localhost:8080/health || echo "Health check failed"
           EOF
