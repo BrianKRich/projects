@@ -1,0 +1,66 @@
+name: Deploy to Lightsail
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
+      - name: Build frontend
+        run: npm run build
+        working-directory: frontend
+
+      - name: Build backend
+        run: GOOS=linux GOARCH=amd64 go build -o server main.go
+        working-directory: backend
+
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.LIGHTSAIL_SSH_KEY }}" > ~/.ssh/lightsail.pem
+          chmod 600 ~/.ssh/lightsail.pem
+          ssh-keyscan -H ${{ secrets.LIGHTSAIL_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy to Lightsail
+        run: |
+          rsync -avz --delete --exclude 'node_modules' \
+            -e "ssh -i ~/.ssh/lightsail.pem" \
+            frontend/dist/ ubuntu@${{ secrets.LIGHTSAIL_HOST }}:~/projects/frontend/dist/
+
+          rsync -avz \
+            -e "ssh -i ~/.ssh/lightsail.pem" \
+            backend/server ubuntu@${{ secrets.LIGHTSAIL_HOST }}:~/projects/backend/
+
+      - name: Restart application
+        run: |
+          ssh -i ~/.ssh/lightsail.pem ubuntu@${{ secrets.LIGHTSAIL_HOST }} << 'EOF'
+            pkill -f './server' || true
+            cd ~/projects/backend
+            nohup ./server > server.log 2>&1 &
+            sleep 2
+            curl -s http://localhost:8080/api/health || echo "Health check failed"
+          EOF
