@@ -4,13 +4,27 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"os"
+	"path/filepath"
 )
 
 func main() {
 	http.HandleFunc("/api/health", healthHandler)
 	http.HandleFunc("/api/hello", helloHandler)
 
-	log.Println("Backend server starting on :8080")
+	// Serve static frontend files
+	frontendDist := "../frontend/dist"
+	fs := http.FileServer(http.Dir(frontendDist))
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		path := filepath.Join(frontendDist, r.URL.Path)
+		if _, err := os.Stat(path); os.IsNotExist(err) {
+			http.ServeFile(w, r, filepath.Join(frontendDist, "index.html"))
+			return
+		}
+		fs.ServeHTTP(w, r)
+	})
+
+	log.Println("Server starting on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
 	}
