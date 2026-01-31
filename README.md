@@ -40,6 +40,12 @@ sudo -u postgres psql -c "GRANT ALL PRIVILEGES ON DATABASE jones_county_xc TO xc
 sudo -u postgres psql -d jones_county_xc -f docs/schema.sql
 ```
 
+4. (Optional) Load seed data for development:
+```bash
+sudo -u postgres psql -d jones_county_xc -f docs/seed-data.sql
+```
+This loads sample data including 12 teams, 100 runners, 5 meets, and 38 results.
+
 ### Frontend
 
 ```bash
@@ -94,6 +100,7 @@ Run from the project root:
 - Frontend uses Tailwind CSS for utility-first styling
 - Backend is a Go HTTP server with PostgreSQL database
 - Database uses pgx driver for PostgreSQL connectivity
+- Backend binary is built during deployment (not committed to repo)
 
 ## Tech Stack
 
