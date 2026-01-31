@@ -91,5 +91,15 @@ Run from the project root:
 ## Development
 
 - Frontend uses Vite for fast development and hot module replacement
+- Frontend uses Tailwind CSS for utility-first styling
 - Backend is a Go HTTP server with PostgreSQL database
 - Database uses pgx driver for PostgreSQL connectivity
+
+## Tech Stack
+
+| Layer | Technology |
+|-------|------------|
+| Frontend | React 19, Vite, Tailwind CSS |
+| Backend | Go, pgx |
+| Database | PostgreSQL 16 |
+| Deployment | AWS Lightsail, GitHub Actions |
