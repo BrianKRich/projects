@@ -24,6 +24,15 @@ CREATE TABLE runners (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Events table (race distances/categories)
+CREATE TABLE events (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    distance_meters INTEGER NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Meets table (race events)
 CREATE TABLE meets (
     id SERIAL PRIMARY KEY,
@@ -40,10 +49,11 @@ CREATE TABLE results (
     id SERIAL PRIMARY KEY,
     runner_id INTEGER REFERENCES runners(id) ON DELETE CASCADE,
     meet_id INTEGER REFERENCES meets(id) ON DELETE CASCADE,
+    event_id INTEGER REFERENCES events(id),
     finish_time INTERVAL NOT NULL,
     place INTEGER,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE(runner_id, meet_id)
+    UNIQUE(runner_id, meet_id, event_id)
 );
 
 -- Grant table privileges to app user
@@ -54,4 +64,5 @@ GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO xc_app;
 CREATE INDEX idx_runners_team ON runners(team_id);
 CREATE INDEX idx_results_runner ON results(runner_id);
 CREATE INDEX idx_results_meet ON results(meet_id);
+CREATE INDEX idx_results_event ON results(event_id);
 CREATE INDEX idx_meets_date ON meets(date);
