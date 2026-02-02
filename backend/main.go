@@ -16,34 +16,22 @@ import (
 
 var db *pgxpool.Pool
 
-type Team struct {
-	ID        int       `json:"id"`
-	Name      string    `json:"name"`
-	School    string    `json:"school,omitempty"`
-	City      string    `json:"city,omitempty"`
-	State     string    `json:"state,omitempty"`
-	CreatedAt time.Time `json:"created_at"`
-}
-
-type Runner struct {
-	ID        int       `json:"id"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Gender    string    `json:"gender,omitempty"`
-	Grade     int       `json:"grade,omitempty"`
-	TeamID    *int      `json:"team_id,omitempty"`
-	TeamName  string    `json:"team_name,omitempty"`
-	CreatedAt time.Time `json:"created_at"`
+type Athlete struct {
+	ID             int       `json:"id"`
+	Name           string    `json:"name"`
+	Grade          int       `json:"grade"`
+	PersonalRecord string    `json:"personal_record,omitempty"`
+	Events         string    `json:"events,omitempty"`
+	CreatedAt      time.Time `json:"created_at,omitempty"`
 }
 
 type Meet struct {
-	ID                int       `json:"id"`
-	Name              string    `json:"name"`
-	Date              string    `json:"date"`
-	Location          string    `json:"location,omitempty"`
-	DistanceMeters    int       `json:"distance_meters"`
-	CourseDescription string    `json:"course_description,omitempty"`
-	CreatedAt         time.Time `json:"created_at"`
+	ID          int       `json:"id"`
+	Name        string    `json:"name"`
+	Date        string    `json:"date"`
+	Location    string    `json:"location,omitempty"`
+	Description string    `json:"description,omitempty"`
+	CreatedAt   time.Time `json:"created_at,omitempty"`
 }
 
 type Result struct {
@@ -52,23 +40,6 @@ type Result struct {
 	MeetID    int    `json:"meetId"`
 	Time      string `json:"time"`
 	Place     int    `json:"place,omitempty"`
-}
-
-type Athlete struct {
-	ID             int     `json:"id"`
-	Name           string  `json:"name"`
-	Grade          int     `json:"grade"`
-	PersonalRecord *string `json:"personal_record"`
-	PREventName    *string `json:"pr_event_name"`
-	PRMeetName     *string `json:"pr_meet_name"`
-	PRMeetDate     *string `json:"pr_meet_date"`
-	PRMeetLocation *string `json:"pr_meet_location"`
-}
-
-type Event struct {
-	ID            int    `json:"id"`
-	Name          string `json:"name"`
-	DistanceMeters int   `json:"distance_meters"`
 }
 
 func main() {
@@ -93,22 +64,9 @@ func main() {
 
 	// API routes
 	http.HandleFunc("/health", healthHandler)
-	http.HandleFunc("/api/hello", helloHandler)
-
-	// Teams endpoints
-	http.HandleFunc("/api/teams", teamsHandler)
-
-	// Runners endpoints
-	http.HandleFunc("/api/runners", runnersHandler)
-
-	// Meets endpoints
-	http.HandleFunc("/api/meets", meetsHandler)
-
-	// Results endpoints
-	http.HandleFunc("/api/results", resultsHandler)
-
-	// Athletes endpoint
 	http.HandleFunc("/api/athletes", athletesHandler)
+	http.HandleFunc("/api/meets", meetsHandler)
+	http.HandleFunc("/api/results", resultsHandler)
 
 	// Serve static frontend files
 	frontendDist := "../frontend/dist"
@@ -130,8 +88,6 @@ func main() {
 
 func healthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-
-	// Check database connection
 	err := db.Ping(context.Background())
 	if err != nil {
 		w.WriteHeader(http.StatusServiceUnavailable)
@@ -141,128 +97,87 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{"status": "ok", "database": "connected"})
 }
 
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(map[string]string{"message": "Hello from Go backend!"})
-}
-
-// Teams handler - GET (list) and POST (create)
-func teamsHandler(w http.ResponseWriter, r *http.Request) {
+// Athletes handler - GET (list), POST (create), and DELETE (remove)
+func athletesHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	switch r.Method {
 	case http.MethodGet:
 		rows, err := db.Query(context.Background(),
-			"SELECT id, name, COALESCE(school, ''), COALESCE(city, ''), COALESCE(state, ''), created_at FROM teams ORDER BY name")
+			`SELECT id, name, grade, COALESCE(personal_record, ''), COALESCE(events, '')
+			 FROM athletes ORDER BY name`)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		defer rows.Close()
 
-		teams := []Team{}
+		athletes := []Athlete{}
 		for rows.Next() {
-			var t Team
-			if err := rows.Scan(&t.ID, &t.Name, &t.School, &t.City, &t.State, &t.CreatedAt); err != nil {
+			var a Athlete
+			if err := rows.Scan(&a.ID, &a.Name, &a.Grade, &a.PersonalRecord, &a.Events); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			teams = append(teams, t)
+			athletes = append(athletes, a)
 		}
-		json.NewEncoder(w).Encode(teams)
+		json.NewEncoder(w).Encode(athletes)
 
 	case http.MethodPost:
-		var t Team
-		if err := json.NewDecoder(r.Body).Decode(&t); err != nil {
+		var a Athlete
+		if err := json.NewDecoder(r.Body).Decode(&a); err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
 		}
 		err := db.QueryRow(context.Background(),
-			"INSERT INTO teams (name, school, city, state) VALUES ($1, $2, $3, $4) RETURNING id, created_at",
-			t.Name, t.School, t.City, t.State).Scan(&t.ID, &t.CreatedAt)
+			"INSERT INTO athletes (name, grade, personal_record, events) VALUES ($1, $2, $3, $4) RETURNING id",
+			a.Name, a.Grade, a.PersonalRecord, a.Events).Scan(&a.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
 		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(t)
+		json.NewEncoder(w).Encode(a)
+
+	case http.MethodDelete:
+		idStr := r.URL.Query().Get("id")
+		if idStr == "" {
+			http.Error(w, "ID parameter required", http.StatusBadRequest)
+			return
+		}
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
+
+		result, err := db.Exec(context.Background(), "DELETE FROM athletes WHERE id = $1", id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if result.RowsAffected() == 0 {
+			http.Error(w, "Athlete not found", http.StatusNotFound)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
 
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-// Runners handler - GET (list) and POST (create)
-func runnersHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	switch r.Method {
-	case http.MethodGet:
-		teamID := r.URL.Query().Get("team_id")
-		var rows pgx.Rows
-		var err error
-
-		if teamID != "" {
-			id, _ := strconv.Atoi(teamID)
-			rows, err = db.Query(context.Background(),
-				`SELECT r.id, r.first_name, r.last_name, COALESCE(r.gender, ''), COALESCE(r.grade, 0),
-				 r.team_id, COALESCE(t.name, ''), r.created_at
-				 FROM runners r LEFT JOIN teams t ON r.team_id = t.id
-				 WHERE r.team_id = $1 ORDER BY r.last_name, r.first_name`, id)
-		} else {
-			rows, err = db.Query(context.Background(),
-				`SELECT r.id, r.first_name, r.last_name, COALESCE(r.gender, ''), COALESCE(r.grade, 0),
-				 r.team_id, COALESCE(t.name, ''), r.created_at
-				 FROM runners r LEFT JOIN teams t ON r.team_id = t.id
-				 ORDER BY r.last_name, r.first_name`)
-		}
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		defer rows.Close()
-
-		runners := []Runner{}
-		for rows.Next() {
-			var r Runner
-			if err := rows.Scan(&r.ID, &r.FirstName, &r.LastName, &r.Gender, &r.Grade, &r.TeamID, &r.TeamName, &r.CreatedAt); err != nil {
-				http.Error(w, err.Error(), http.StatusInternalServerError)
-				return
-			}
-			runners = append(runners, r)
-		}
-		json.NewEncoder(w).Encode(runners)
-
-	case http.MethodPost:
-		var runner Runner
-		if err := json.NewDecoder(r.Body).Decode(&runner); err != nil {
-			http.Error(w, err.Error(), http.StatusBadRequest)
-			return
-		}
-		err := db.QueryRow(context.Background(),
-			"INSERT INTO runners (first_name, last_name, gender, grade, team_id) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at",
-			runner.FirstName, runner.LastName, runner.Gender, runner.Grade, runner.TeamID).Scan(&runner.ID, &runner.CreatedAt)
-		if err != nil {
-			http.Error(w, err.Error(), http.StatusInternalServerError)
-			return
-		}
-		w.WriteHeader(http.StatusCreated)
-		json.NewEncoder(w).Encode(runner)
-
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
-}
-
-// Meets handler - GET (list) and POST (create)
+// Meets handler - GET (list), POST (create), and DELETE (remove)
 func meetsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	switch r.Method {
 	case http.MethodGet:
 		rows, err := db.Query(context.Background(),
-			`SELECT id, name, date, COALESCE(location, ''), COALESCE(distance_meters, 5000),
-			 COALESCE(course_description, ''), created_at FROM meets ORDER BY date DESC`)
+			`SELECT id, name, date, COALESCE(location, ''), COALESCE(description, '')
+			 FROM meets ORDER BY date DESC`)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -273,7 +188,7 @@ func meetsHandler(w http.ResponseWriter, r *http.Request) {
 		for rows.Next() {
 			var m Meet
 			var date time.Time
-			if err := rows.Scan(&m.ID, &m.Name, &date, &m.Location, &m.DistanceMeters, &m.CourseDescription, &m.CreatedAt); err != nil {
+			if err := rows.Scan(&m.ID, &m.Name, &date, &m.Location, &m.Description); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -289,8 +204,8 @@ func meetsHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		err := db.QueryRow(context.Background(),
-			"INSERT INTO meets (name, date, location, distance_meters, course_description) VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at",
-			m.Name, m.Date, m.Location, m.DistanceMeters, m.CourseDescription).Scan(&m.ID, &m.CreatedAt)
+			"INSERT INTO meets (name, date, location, description) VALUES ($1, $2, $3, $4) RETURNING id",
+			m.Name, m.Date, m.Location, m.Description).Scan(&m.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
@@ -298,12 +213,37 @@ func meetsHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(m)
 
+	case http.MethodDelete:
+		idStr := r.URL.Query().Get("id")
+		if idStr == "" {
+			http.Error(w, "ID parameter required", http.StatusBadRequest)
+			return
+		}
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
+
+		result, err := db.Exec(context.Background(), "DELETE FROM meets WHERE id = $1", id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		if result.RowsAffected() == 0 {
+			http.Error(w, "Meet not found", http.StatusNotFound)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+
 	default:
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
 }
 
-// Results handler - GET (list) and POST (create)
+// Results handler - GET (list), POST (create), and DELETE (remove)
 func resultsHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -314,18 +254,16 @@ func resultsHandler(w http.ResponseWriter, r *http.Request) {
 		var rows pgx.Rows
 		var err error
 
-		query := `SELECT res.id, res.runner_id, res.meet_id, res.finish_time::text, COALESCE(res.place, 0)
-				  FROM results res
-				  JOIN meets m ON res.meet_id = m.id`
+		query := `SELECT id, athlete_id, meet_id, time, COALESCE(place, 0) FROM results`
 
 		if meetID != "" {
 			id, _ := strconv.Atoi(meetID)
-			rows, err = db.Query(context.Background(), query+" WHERE res.meet_id = $1 ORDER BY res.place, res.finish_time", id)
+			rows, err = db.Query(context.Background(), query+" WHERE meet_id = $1 ORDER BY place, time", id)
 		} else if athleteID != "" {
 			id, _ := strconv.Atoi(athleteID)
-			rows, err = db.Query(context.Background(), query+" WHERE res.runner_id = $1 ORDER BY m.date DESC", id)
+			rows, err = db.Query(context.Background(), query+" WHERE athlete_id = $1 ORDER BY meet_id", id)
 		} else {
-			rows, err = db.Query(context.Background(), query+" ORDER BY m.date DESC, res.place")
+			rows, err = db.Query(context.Background(), query+" ORDER BY meet_id, place")
 		}
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -351,7 +289,7 @@ func resultsHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		err := db.QueryRow(context.Background(),
-			"INSERT INTO results (runner_id, meet_id, finish_time, place) VALUES ($1, $2, $3::interval, $4) RETURNING id",
+			"INSERT INTO results (athlete_id, meet_id, time, place) VALUES ($1, $2, $3, $4) RETURNING id",
 			res.AthleteID, res.MeetID, res.Time, res.Place).Scan(&res.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -360,48 +298,32 @@ func resultsHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusCreated)
 		json.NewEncoder(w).Encode(res)
 
-	default:
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-	}
-}
+	case http.MethodDelete:
+		idStr := r.URL.Query().Get("id")
+		if idStr == "" {
+			http.Error(w, "ID parameter required", http.StatusBadRequest)
+			return
+		}
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
 
-// Athletes handler - GET (list athletes with personal records)
-func athletesHandler(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
-
-	if r.Method != http.MethodGet {
-		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
-		return
-	}
-
-	rows, err := db.Query(context.Background(),
-		`SELECT r.id, r.first_name || ' ' || r.last_name AS athlete_name,
-		 COALESCE(r.grade, 0), pr.finish_time::text, e.name, m.name, m.date::text, m.location
-		 FROM runners r
-		 LEFT JOIN LATERAL (
-		   SELECT res.finish_time, res.meet_id, res.event_id
-		   FROM results res
-		   WHERE res.runner_id = r.id
-		   ORDER BY res.finish_time ASC
-		   LIMIT 1
-		 ) pr ON true
-		 LEFT JOIN meets m ON pr.meet_id = m.id
-		 LEFT JOIN events e ON pr.event_id = e.id
-		 ORDER BY athlete_name`)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	defer rows.Close()
-
-	athletes := []Athlete{}
-	for rows.Next() {
-		var a Athlete
-		if err := rows.Scan(&a.ID, &a.Name, &a.Grade, &a.PersonalRecord, &a.PREventName, &a.PRMeetName, &a.PRMeetDate, &a.PRMeetLocation); err != nil {
+		result, err := db.Exec(context.Background(), "DELETE FROM results WHERE id = $1", id)
+		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
-		athletes = append(athletes, a)
+
+		if result.RowsAffected() == 0 {
+			http.Error(w, "Result not found", http.StatusNotFound)
+			return
+		}
+
+		w.WriteHeader(http.StatusNoContent)
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 	}
-	json.NewEncoder(w).Encode(athletes)
 }
