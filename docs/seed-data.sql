@@ -6,24 +6,24 @@ DELETE FROM athletes;
 DELETE FROM meets;
 
 -- Athletes (17 Jones County runners)
-INSERT INTO athletes (id, name, grade, personal_record, events) VALUES
-(1, 'John Smith', 11, '17:22', '5K Varsity'),
-(2, 'Michael Johnson', 12, '17:38', '5K Varsity'),
-(3, 'David Williams', 11, '17:58', '5K Varsity'),
-(4, 'James Brown', 10, '18:25', '5K Varsity, 5K JV'),
-(5, 'Robert Davis', 9, '18:48', '5K JV'),
-(6, 'William Miller', 12, '17:42', '5K Varsity'),
-(7, 'Emma Wilson', 11, '19:32', '5K Varsity'),
-(8, 'Olivia Moore', 12, '19:18', '5K Varsity'),
-(9, 'Sophia Taylor', 10, '20:08', '5K Varsity, 5K JV'),
-(10, 'Isabella Anderson', 11, '20:38', '5K Varsity'),
-(11, 'Ava Thomas', 9, '21:12', '5K JV'),
-(12, 'Tyler Adams', 9, '19:15', '5K JV'),
-(13, 'Ryan Nelson', 10, '18:38', '5K Varsity, 5K JV'),
-(14, 'Joshua Hill', 11, '18:02', '5K Varsity'),
-(15, 'Andrew Baker', 12, '18:18', '5K Varsity'),
-(16, 'Grace Campbell', 9, '21:42', '5K JV'),
-(17, 'Chloe Mitchell', 10, '20:52', '5K Varsity, 5K JV');
+INSERT INTO athletes (id, name, gender, grade, personal_record, events) VALUES
+(1, 'John Smith', 'M', 11, '17:22', '5K Varsity'),
+(2, 'Michael Johnson', 'M', 12, '17:38', '5K Varsity'),
+(3, 'David Williams', 'M', 11, '17:58', '5K Varsity'),
+(4, 'James Brown', 'M', 10, '18:25', '5K Varsity, 5K JV'),
+(5, 'Robert Davis', 'M', 9, '18:48', '5K JV'),
+(6, 'William Miller', 'M', 12, '17:42', '5K Varsity'),
+(7, 'Emma Wilson', 'F', 11, '19:32', '5K Varsity'),
+(8, 'Olivia Moore', 'F', 12, '19:18', '5K Varsity'),
+(9, 'Sophia Taylor', 'F', 10, '20:08', '5K Varsity, 5K JV'),
+(10, 'Isabella Anderson', 'F', 11, '20:38', '5K Varsity'),
+(11, 'Ava Thomas', 'F', 9, '21:12', '5K JV'),
+(12, 'Tyler Adams', 'M', 9, '19:15', '5K JV'),
+(13, 'Ryan Nelson', 'M', 10, '18:38', '5K Varsity, 5K JV'),
+(14, 'Joshua Hill', 'M', 11, '18:02', '5K Varsity'),
+(15, 'Andrew Baker', 'M', 12, '18:18', '5K Varsity'),
+(16, 'Grace Campbell', 'F', 9, '21:42', '5K JV'),
+(17, 'Chloe Mitchell', 'F', 10, '20:52', '5K Varsity, 5K JV');
 
 -- Meets (5 total)
 INSERT INTO meets (id, name, date, location, description) VALUES

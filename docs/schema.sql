@@ -4,6 +4,7 @@
 CREATE TABLE athletes (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    gender CHAR(1) CHECK (gender IN ('M', 'F')),
     grade INTEGER CHECK (grade BETWEEN 9 AND 12),
     personal_record VARCHAR(20),
     events VARCHAR(200),

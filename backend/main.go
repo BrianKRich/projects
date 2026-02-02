@@ -19,6 +19,7 @@ var db *pgxpool.Pool
 type Athlete struct {
 	ID             int       `json:"id"`
 	Name           string    `json:"name"`
+	Gender         string    `json:"gender,omitempty"`
 	Grade          int       `json:"grade"`
 	PersonalRecord string    `json:"personal_record,omitempty"`
 	Events         string    `json:"events,omitempty"`
@@ -104,7 +105,7 @@ func athletesHandler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		rows, err := db.Query(context.Background(),
-			`SELECT id, name, grade, COALESCE(personal_record, ''), COALESCE(events, '')
+			`SELECT id, name, COALESCE(gender, ''), grade, COALESCE(personal_record, ''), COALESCE(events, '')
 			 FROM athletes ORDER BY name`)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -115,7 +116,7 @@ func athletesHandler(w http.ResponseWriter, r *http.Request) {
 		athletes := []Athlete{}
 		for rows.Next() {
 			var a Athlete
-			if err := rows.Scan(&a.ID, &a.Name, &a.Grade, &a.PersonalRecord, &a.Events); err != nil {
+			if err := rows.Scan(&a.ID, &a.Name, &a.Gender, &a.Grade, &a.PersonalRecord, &a.Events); err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
@@ -130,8 +131,8 @@ func athletesHandler(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		err := db.QueryRow(context.Background(),
-			"INSERT INTO athletes (name, grade, personal_record, events) VALUES ($1, $2, $3, $4) RETURNING id",
-			a.Name, a.Grade, a.PersonalRecord, a.Events).Scan(&a.ID)
+			"INSERT INTO athletes (name, gender, grade, personal_record, events) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+			a.Name, a.Gender, a.Grade, a.PersonalRecord, a.Events).Scan(&a.ID)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
