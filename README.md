@@ -44,7 +44,7 @@ sudo -u postgres psql -d jones_county_xc -f docs/schema.sql
 ```bash
 sudo -u postgres psql -d jones_county_xc -f docs/seed-data.sql
 ```
-This loads sample data including 12 teams, 100 runners, 5 meets, and 38 results.
+This loads sample data including 17 Jones County athletes, 5 meets, and 85 results.
 
 ### Frontend
 
@@ -67,18 +67,35 @@ The backend API will be available at `http://localhost:8080`
 
 ## API Endpoints
 
+### Health
 | Endpoint | Method | Description |
 |----------|--------|-------------|
 | `/health` | GET | Health check with database status |
-| `/api/hello` | GET | Returns a greeting message |
-| `/api/teams` | GET | List all teams |
-| `/api/teams` | POST | Create a team |
-| `/api/runners` | GET | List all runners (optional `?team_id=`) |
-| `/api/runners` | POST | Create a runner |
+
+### Athletes
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/athletes` | GET | List all athletes |
+| `/api/athletes` | POST | Create a new athlete |
+| `/api/athletes?id={id}` | DELETE | Delete an athlete by ID (cascades to results) |
+
+### Meets
+| Endpoint | Method | Description |
+|----------|--------|-------------|
 | `/api/meets` | GET | List all meets |
-| `/api/meets` | POST | Create a meet |
-| `/api/results` | GET | List results (optional `?meet_id=` or `?runner_id=`) |
-| `/api/results` | POST | Create a result |
+| `/api/meets` | POST | Create a new meet |
+| `/api/meets?id={id}` | DELETE | Delete a meet by ID (cascades to results) |
+
+### Results
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/api/results` | GET | List all results |
+| `/api/results?meetId={id}` | GET | List results for a specific meet |
+| `/api/results?athleteId={id}` | GET | List results for a specific athlete |
+| `/api/results` | POST | Create a new result |
+| `/api/results?id={id}` | DELETE | Delete a result by ID |
+
+**Note:** The web interface includes an interactive API documentation viewer accessible via the "Show API Docs" button.
 
 ## Make Commands
 
