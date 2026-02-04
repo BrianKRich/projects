@@ -63,11 +63,11 @@ func main() {
 	}
 	log.Println("Connected to database")
 
-	// API routes
-	http.HandleFunc("/health", healthHandler)
-	http.HandleFunc("/api/athletes", athletesHandler)
-	http.HandleFunc("/api/meets", meetsHandler)
-	http.HandleFunc("/api/results", resultsHandler)
+	// API routes with CORS
+	http.HandleFunc("/health", corsMiddleware(healthHandler))
+	http.HandleFunc("/api/athletes", corsMiddleware(athletesHandler))
+	http.HandleFunc("/api/meets", corsMiddleware(meetsHandler))
+	http.HandleFunc("/api/results", corsMiddleware(resultsHandler))
 
 	// Serve static frontend files
 	frontendDist := "../frontend/dist"
@@ -84,6 +84,22 @@ func main() {
 	log.Println("Server starting on :8080")
 	if err := http.ListenAndServe(":8080", nil); err != nil {
 		log.Fatal(err)
+	}
+}
+
+func corsMiddleware(next http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
+
+		// Handle preflight requests
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+
+		next(w, r)
 	}
 }
 
