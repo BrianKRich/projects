@@ -5,6 +5,7 @@ node_modules/
 frontend/dist/
 backend/bin/
 backend/server
+backend/test_server
 
 # IDE
 .idea/
