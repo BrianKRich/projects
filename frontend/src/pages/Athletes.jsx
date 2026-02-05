@@ -37,6 +37,7 @@ export default function Athletes() {
           placeholder="Search athletes..."
           value={search}
           onChange={e => setSearch(e.target.value)}
+          aria-label="Search athletes"
           className="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4D007B]"
         />
         <div className="flex gap-2">
@@ -44,8 +45,9 @@ export default function Athletes() {
             <button
               key={opt}
               onClick={() => setGender(opt)}
+              aria-pressed={gender === opt}
               className={
-                'px-4 py-2 rounded-lg font-medium transition-colors ' +
+                'px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium transition-colors ' +
                 (gender === opt
                   ? 'bg-[#FFD700] text-[#4D007B]'
                   : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50')
@@ -58,30 +60,31 @@ export default function Athletes() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow overflow-hidden">
+      <div className="bg-white rounded-xl shadow overflow-x-auto">
         <table className="min-w-full">
+          <caption className="sr-only">Athletes roster</caption>
           <thead>
             <tr className="bg-[#4D007B] text-white">
-              <th className="px-6 py-3 text-left text-sm font-semibold">Name</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Gender</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Grade</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Personal Record</th>
-              <th className="px-6 py-3 text-left text-sm font-semibold">Events</th>
+              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Name</th>
+              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Gender</th>
+              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Grade</th>
+              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">PR</th>
+              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Events</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {filtered.map(a => (
               <tr key={a.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-6 py-3 text-sm font-medium text-gray-900">{a.name}</td>
-                <td className="px-6 py-3 text-sm text-gray-500">{a.gender === 'M' ? 'Boys' : 'Girls'}</td>
-                <td className="px-6 py-3 text-sm text-gray-500">{a.grade}</td>
-                <td className="px-6 py-3 text-sm text-gray-500">{a.personal_record || '—'}</td>
-                <td className="px-6 py-3 text-sm text-gray-500">{a.events || '—'}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-medium text-gray-900">{a.name}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{a.gender === 'M' ? 'Boys' : 'Girls'}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500">{a.grade}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500">{a.personal_record || '—'}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{a.events || '—'}</td>
               </tr>
             ))}
             {filtered.length === 0 && (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-gray-400">No athletes match your filters.</td>
+                <td colSpan={5} className="px-2 sm:px-6 py-8 text-center text-gray-400">No athletes match your filters.</td>
               </tr>
             )}
           </tbody>

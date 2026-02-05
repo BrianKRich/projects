@@ -21,11 +21,11 @@ export default function Coaches() {
       <h1 className="text-3xl font-bold text-[#4D007B] mb-2">Coaching Staff</h1>
       <p className="text-gray-500 mb-6">Meet the dedicated coaching staff leading our Greyhounds to excellence.</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {coaches.map(coach => (
           <div key={coach.id} className="bg-white rounded-xl shadow overflow-hidden">
             <div className="h-2 bg-[#4D007B]" />
-            <div className="p-6">
+            <div className="p-4 sm:p-6">
               <h2 className="text-xl font-bold text-gray-900">{coach.name}</h2>
               <p className="text-[#FFD700] font-semibold text-sm mt-0.5">{coach.title}</p>
               {coach.bio && <p className="text-gray-500 text-sm mt-3">{coach.bio}</p>}

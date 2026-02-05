@@ -27,13 +27,13 @@ export default function Login() {
   }
 
   return (
-    <div className="max-w-md mx-auto mt-16">
+    <div className="max-w-md mx-auto mt-8 sm:mt-16">
       <div className="bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="bg-[#4D007B] px-8 py-6">
+        <div className="bg-[#4D007B] px-4 sm:px-8 py-4 sm:py-6">
           <h1 className="text-2xl font-bold text-white">Admin Login</h1>
           <p className="text-gray-300 text-sm mt-1">Sign in to manage team data</p>
         </div>
-        <form onSubmit={handleSubmit} className="p-8 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="p-4 sm:p-8 flex flex-col gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
             <input
@@ -54,11 +54,11 @@ export default function Login() {
               className="w-full px-3 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#4D007B]"
             />
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
+          {error && <p className="text-red-500 text-sm" role="alert">{error}</p>}
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-2 rounded-lg bg-[#4D007B] text-white font-semibold hover:bg-[#3a0059] transition-colors disabled:opacity-50"
+            className="w-full py-2 rounded-lg bg-[#4D007B] text-white font-semibold hover:bg-[#3a0059] transition-colors disabled:opacity-50 focus-visible:outline-[#FFD700]"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>

@@ -55,15 +55,16 @@ export default function MeetDetail() {
     if (rows.length === 0) return null
     return (
       <div>
-        <h3 className="text-lg font-semibold text-[#4D007B] mb-2">{title}</h3>
-        <div className="bg-white rounded-xl shadow overflow-hidden">
+        <h2 className="text-lg font-semibold text-[#4D007B] mb-2">{title}</h2>
+        <div className="bg-white rounded-xl shadow overflow-x-auto">
           <table className="min-w-full">
+            <caption className="sr-only">{title}</caption>
             <thead>
               <tr className="bg-[#4D007B] text-white">
-                <th className="px-6 py-3 text-left text-sm font-semibold">Place</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Athlete</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Grade</th>
-                <th className="px-6 py-3 text-left text-sm font-semibold">Time</th>
+                <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Place</th>
+                <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Athlete</th>
+                <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Grade</th>
+                <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Time</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -71,10 +72,10 @@ export default function MeetDetail() {
                 const athlete = athleteMap[r.athleteId]
                 return (
                   <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-3 text-sm font-bold text-gray-900">{r.place}</td>
-                    <td className="px-6 py-3 text-sm text-gray-900">{athlete?.name || '—'}</td>
-                    <td className="px-6 py-3 text-sm text-gray-500">{athlete?.grade || '—'}</td>
-                    <td className="px-6 py-3 text-sm text-gray-500">{r.time}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-bold text-gray-900">{r.place}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-900">{athlete?.name || '—'}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{athlete?.grade || '—'}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500">{r.time}</td>
                   </tr>
                 )
               })}
@@ -92,7 +93,7 @@ export default function MeetDetail() {
       </Link>
 
       {/* Meet header */}
-      <div className="bg-[#4D007B] text-white rounded-xl p-6 mb-6">
+      <div className="bg-[#4D007B] text-white rounded-xl p-4 sm:p-6 mb-6">
         <h1 className="text-2xl font-bold">{meet.name}</h1>
         <p className="text-gray-300 mt-1">{formatDate(meet.date)}</p>
         {meet.location && <p className="text-gray-300 text-sm">{meet.location}</p>}

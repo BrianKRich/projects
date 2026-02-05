@@ -36,7 +36,8 @@ export default function Meets() {
           <Link
             key={meet.id}
             to={`/meets/${meet.id}`}
-            className="bg-white rounded-xl shadow p-5 hover:shadow-md transition border-l-4 border-[#4D007B]"
+            aria-label={`View results for ${meet.name}`}
+            className="bg-white rounded-xl shadow p-3 sm:p-5 hover:shadow-md transition border-l-4 border-[#4D007B]"
           >
             <h2 className="text-xl font-bold text-[#4D007B]">{meet.name}</h2>
             <p className="text-gray-500 mt-1">{formatDate(meet.date)}</p>

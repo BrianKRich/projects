@@ -11,14 +11,17 @@ const navLinks = [
 ]
 
 function linkClass({ isActive }) {
-  return isActive
-    ? 'text-[#FFD700] font-semibold border-b-2 border-[#FFD700] pb-0.5'
-    : 'text-white hover:text-[#FFD700] transition-colors'
+  return (
+    'focus-visible:outline-[#FFD700] ' +
+    (isActive
+      ? 'text-[#FFD700] font-semibold border-b-2 border-[#FFD700] pb-0.5'
+      : 'text-white hover:text-[#FFD700] transition-colors')
+  )
 }
 
 function mobileLinkClass({ isActive }) {
   return (
-    'block px-4 py-2 rounded ' +
+    'block px-4 py-2 rounded focus-visible:outline-[#FFD700] ' +
     (isActive
       ? 'bg-[#3a0059] text-[#FFD700] font-semibold'
       : 'text-white hover:bg-[#3a0059] hover:text-[#FFD700] transition-colors')
@@ -31,17 +34,23 @@ export default function Layout() {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
+      <a
+        href="#main-content"
+        className="absolute left-2 top-2 z-50 px-4 py-2 bg-[#FFD700] text-[#4D007B] rounded font-semibold -translate-y-full focus-visible:translate-y-0 transition-transform"
+      >
+        Skip to main content
+      </a>
       <header className="bg-[#4D007B] shadow-lg">
         <div className="max-w-6xl mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Brand */}
             <NavLink to="/" className="flex items-center gap-2">
-              <span className="text-white text-xl font-bold">Jones County</span>
-              <span className="text-[#FFD700] text-xl font-bold">Greyhounds</span>
+              <span className="text-white text-base sm:text-xl font-bold">Jones County</span>
+              <span className="text-[#FFD700] text-base sm:text-xl font-bold">Greyhounds</span>
             </NavLink>
 
             {/* Desktop nav */}
-            <nav className="hidden md:flex items-center gap-6">
+            <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
               {navLinks.map(({ to, label }) => (
                 <NavLink key={to} to={to} end={to === '/'} className={linkClass}>
                   {label}
@@ -64,9 +73,10 @@ export default function Layout() {
 
             {/* Mobile hamburger */}
             <button
-              className="md:hidden text-white focus:outline-none"
+              className="md:hidden text-white focus-visible:outline-[#FFD700]"
               onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Toggle menu"
+              aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+              aria-expanded={menuOpen}
             >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 {menuOpen ? (
@@ -81,7 +91,7 @@ export default function Layout() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <div className="md:hidden px-4 pb-4 flex flex-col gap-1">
+          <nav className="md:hidden px-4 pb-4 flex flex-col gap-1" aria-label="Mobile navigation">
             {navLinks.map(({ to, label }) => (
               <NavLink key={to} to={to} end={to === '/'} className={mobileLinkClass} onClick={() => setMenuOpen(false)}>
                 {label}
@@ -100,11 +110,11 @@ export default function Layout() {
             ) : (
               <NavLink to="/login" className={mobileLinkClass} onClick={() => setMenuOpen(false)}>Login</NavLink>
             )}
-          </div>
+          </nav>
         )}
       </header>
 
-      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8">
+      <main className="flex-1 max-w-6xl w-full mx-auto px-4 py-8" id="main-content" tabIndex={-1}>
         <Outlet />
       </main>
 

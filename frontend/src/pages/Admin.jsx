@@ -7,15 +7,19 @@ const TABS = ['Athletes', 'Meets', 'Results', 'Coaches']
 
 function TabBar({ active, onChange }) {
   return (
-    <div className="flex gap-1 mb-6 flex-wrap">
+    <div role="tablist" aria-label="Admin sections" className="flex gap-1 mb-6 flex-wrap">
       {TABS.map(t => (
         <button
           key={t}
+          role="tab"
+          aria-selected={active === t}
+          aria-controls={`admin-${t}-panel`}
+          id={`admin-${t}-tab`}
           onClick={() => onChange(t)}
           className={
-            'px-4 py-2 rounded-lg text-sm font-semibold transition-colors ' +
+            'px-2 py-1 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors ' +
             (active === t
-              ? 'bg-[#4D007B] text-white'
+              ? 'bg-[#4D007B] text-white focus-visible:outline-[#FFD700]'
               : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50')
           }
         >
@@ -59,7 +63,7 @@ function AthleteForm({ initial, onSave, onCancel }) {
         <input value={form.events} onChange={set('events')} placeholder="e.g. 5K Varsity" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2 flex gap-2">
-        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059]">Save</button>
+        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
         <button onClick={onCancel} className="px-3 py-1 bg-gray-200 text-gray-600 rounded text-xs font-semibold hover:bg-gray-300">Cancel</button>
       </td>
     </tr>
@@ -127,8 +131,8 @@ function AthletesTab() {
                     <td className="px-3 py-2 text-sm text-gray-500">{a.personal_record || '—'}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">{a.events || '—'}</td>
                     <td className="px-3 py-2 flex gap-2">
-                      <button onClick={() => setEditId(a.id)} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
-                      <button onClick={() => handleDelete(a.id)} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
+                      <button onClick={() => setEditId(a.id)} aria-label={`Edit athlete ${a.name}`} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
+                      <button onClick={() => handleDelete(a.id)} aria-label={`Delete athlete ${a.name}`} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
                     </td>
                   </tr>
                 )
@@ -165,7 +169,7 @@ function MeetForm({ initial, onSave, onCancel }) {
         <input value={form.description} onChange={set('description')} placeholder="Description" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2 flex gap-2">
-        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059]">Save</button>
+        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
         <button onClick={onCancel} className="px-3 py-1 bg-gray-200 text-gray-600 rounded text-xs font-semibold hover:bg-gray-300">Cancel</button>
       </td>
     </tr>
@@ -215,7 +219,7 @@ function MeetsTab() {
               <th className="px-3 py-2 text-sm font-semibold">Name</th>
               <th className="px-3 py-2 text-sm font-semibold">Date</th>
               <th className="px-3 py-2 text-sm font-semibold">Location</th>
-              <th className="px-3 py-2 text-sm font-semibold">Description</th>
+              <th className="px-3 py-2 text-sm font-semibold hidden sm:table-cell">Description</th>
               <th className="px-3 py-2 text-sm font-semibold">Actions</th>
             </tr>
           </thead>
@@ -229,10 +233,10 @@ function MeetsTab() {
                     <td className="px-3 py-2 text-sm text-gray-900">{m.name}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">{m.date}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">{m.location || '—'}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{m.description || '—'}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500 hidden sm:table-cell">{m.description || '—'}</td>
                     <td className="px-3 py-2 flex gap-2">
-                      <button onClick={() => setEditId(m.id)} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
-                      <button onClick={() => handleDelete(m.id)} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
+                      <button onClick={() => setEditId(m.id)} aria-label={`Edit meet ${m.name}`} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
+                      <button onClick={() => handleDelete(m.id)} aria-label={`Delete meet ${m.name}`} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
                     </td>
                   </tr>
                 )
@@ -271,7 +275,7 @@ function ResultForm({ initial, athletes, meets, onSave, onCancel }) {
         <input type="number" value={form.place} onChange={set('place')} placeholder="Place" className="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2 flex gap-2">
-        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059]">Save</button>
+        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
         <button onClick={onCancel} className="px-3 py-1 bg-gray-200 text-gray-600 rounded text-xs font-semibold hover:bg-gray-300">Cancel</button>
       </td>
     </tr>
@@ -352,8 +356,8 @@ function ResultsTab() {
                     <td className="px-3 py-2 text-sm text-gray-500">{r.time}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">{r.place}</td>
                     <td className="px-3 py-2 flex gap-2">
-                      <button onClick={() => setEditId(r.id)} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
-                      <button onClick={() => handleDelete(r.id)} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
+                      <button onClick={() => setEditId(r.id)} aria-label={`Edit result for ${athleteMap[r.athleteId]?.name || 'athlete'} at ${meetMap[r.meetId]?.name || 'meet'}`} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
+                      <button onClick={() => handleDelete(r.id)} aria-label={`Delete result for ${athleteMap[r.athleteId]?.name || 'athlete'} at ${meetMap[r.meetId]?.name || 'meet'}`} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
                     </td>
                   </tr>
                 )
@@ -387,7 +391,7 @@ function CoachForm({ initial, onSave, onCancel }) {
         <input value={form.bio} onChange={set('bio')} placeholder="Bio" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2 flex gap-2">
-        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059]">Save</button>
+        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
         <button onClick={onCancel} className="px-3 py-1 bg-gray-200 text-gray-600 rounded text-xs font-semibold hover:bg-gray-300">Cancel</button>
       </td>
     </tr>
@@ -436,7 +440,7 @@ function CoachesTab() {
             <tr className="bg-[#4D007B] text-white">
               <th className="px-3 py-2 text-sm font-semibold">Name</th>
               <th className="px-3 py-2 text-sm font-semibold">Title</th>
-              <th className="px-3 py-2 text-sm font-semibold">Bio</th>
+              <th className="px-3 py-2 text-sm font-semibold hidden sm:table-cell">Bio</th>
               <th className="px-3 py-2 text-sm font-semibold">Actions</th>
             </tr>
           </thead>
@@ -449,10 +453,10 @@ function CoachesTab() {
                   <tr key={c.id} className="hover:bg-gray-50">
                     <td className="px-3 py-2 text-sm text-gray-900">{c.name}</td>
                     <td className="px-3 py-2 text-sm text-gray-500">{c.title}</td>
-                    <td className="px-3 py-2 text-sm text-gray-500">{c.bio || '—'}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500 hidden sm:table-cell">{c.bio || '—'}</td>
                     <td className="px-3 py-2 flex gap-2">
-                      <button onClick={() => setEditId(c.id)} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
-                      <button onClick={() => handleDelete(c.id)} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
+                      <button onClick={() => setEditId(c.id)} aria-label={`Edit coach ${c.name}`} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
+                      <button onClick={() => handleDelete(c.id)} aria-label={`Delete coach ${c.name}`} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
                     </td>
                   </tr>
                 )
@@ -471,13 +475,13 @@ export default function Admin() {
 
   return (
     <div>
-      <h1 className="text-3xl font-bold text-[#4D007B] mb-6">Admin Dashboard</h1>
+      <h1 className="text-2xl sm:text-3xl font-bold text-[#4D007B] mb-6">Admin Dashboard</h1>
       <TabBar active={activeTab} onChange={setActiveTab} />
 
-      {activeTab === 'Athletes' && <AthletesTab />}
-      {activeTab === 'Meets' && <MeetsTab />}
-      {activeTab === 'Results' && <ResultsTab />}
-      {activeTab === 'Coaches' && <CoachesTab />}
+      {activeTab === 'Athletes' && <div role="tabpanel" id="admin-Athletes-panel" aria-labelledby="admin-Athletes-tab"><AthletesTab /></div>}
+      {activeTab === 'Meets' && <div role="tabpanel" id="admin-Meets-panel" aria-labelledby="admin-Meets-tab"><MeetsTab /></div>}
+      {activeTab === 'Results' && <div role="tabpanel" id="admin-Results-panel" aria-labelledby="admin-Results-tab"><ResultsTab /></div>}
+      {activeTab === 'Coaches' && <div role="tabpanel" id="admin-Coaches-panel" aria-labelledby="admin-Coaches-tab"><CoachesTab /></div>}
     </div>
   )
 }
