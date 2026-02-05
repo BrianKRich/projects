@@ -54,7 +54,7 @@ export default function MeetDetail() {
   function ResultsTable({ rows, title }) {
     if (rows.length === 0) return null
     return (
-      <div className="mb-6">
+      <div>
         <h3 className="text-lg font-semibold text-[#4D007B] mb-2">{title}</h3>
         <div className="bg-white rounded-xl shadow overflow-hidden">
           <table className="min-w-full">
@@ -99,12 +99,14 @@ export default function MeetDetail() {
         {meet.description && <p className="text-gray-200 text-sm mt-2">{meet.description}</p>}
       </div>
 
-      {/* Results */}
-      <ResultsTable rows={boysResults} title="Boys Results" />
-      <ResultsTable rows={girlsResults} title="Girls Results" />
-
-      {results.length === 0 && (
+      {/* Results — two columns on desktop, stacked on mobile */}
+      {results.length === 0 ? (
         <p className="text-center text-gray-400 py-8">No results recorded for this meet.</p>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <ResultsTable rows={boysResults} title="Boys Results" />
+          <ResultsTable rows={girlsResults} title="Girls Results" />
+        </div>
       )}
     </div>
   )
