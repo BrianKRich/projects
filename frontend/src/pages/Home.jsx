@@ -4,10 +4,16 @@ export default function Home() {
 
   return (
     <div>
+      {/* Logo */}
+      <div className="flex justify-center mb-4">
+        <img src="/jc-logo.jpg" alt="Jones County Cross Country" className="w-[36rem] sm:w-[48rem] max-w-full" />
+      </div>
+      <div className="w-full h-px bg-[#d4b5e8] mb-4" />
+
       {/* Hero */}
       <div className="bg-[#4D007B] rounded-xl text-white text-center py-10 sm:py-16 px-4 sm:px-6 mb-8">
         <h1 className="text-2xl sm:text-5xl font-bold mb-3">Jones County Greyhounds</h1>
-        <p className="text-base sm:text-xl text-gray-200">Building champions on and off the track</p>
+        <p className="text-base sm:text-xl text-[#FFD700]">Building champions on and off the track</p>
       </div>
 
       <img
