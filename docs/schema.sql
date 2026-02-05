@@ -32,6 +32,15 @@ CREATE TABLE results (
     UNIQUE(athlete_id, meet_id)
 );
 
+-- Coaches table
+CREATE TABLE coaches (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    title VARCHAR(100) NOT NULL,
+    bio TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes
 CREATE INDEX idx_results_athlete ON results(athlete_id);
 CREATE INDEX idx_results_meet ON results(meet_id);

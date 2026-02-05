@@ -1,0 +1,42 @@
+import { useState, useEffect } from 'react'
+import { useApi } from '../hooks/useApi'
+
+export default function Coaches() {
+  const { get } = useApi()
+  const [coaches, setCoaches] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
+
+  useEffect(() => {
+    get('/api/coaches')
+      .then(data => { setCoaches(data); setLoading(false) })
+      .catch(err => { setError(err.message); setLoading(false) })
+  }, [])
+
+  if (loading) return <div className="text-center py-12 text-gray-500">Loading coaching staff...</div>
+  if (error) return <div className="text-center py-12 text-red-500">Error: {error}</div>
+
+  return (
+    <div>
+      <h1 className="text-3xl font-bold text-[#4D007B] mb-2">Coaching Staff</h1>
+      <p className="text-gray-500 mb-6">Meet the dedicated coaching staff leading our Greyhounds to excellence.</p>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {coaches.map(coach => (
+          <div key={coach.id} className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="h-2 bg-[#4D007B]" />
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-900">{coach.name}</h2>
+              <p className="text-[#FFD700] font-semibold text-sm mt-0.5">{coach.title}</p>
+              {coach.bio && <p className="text-gray-500 text-sm mt-3">{coach.bio}</p>}
+            </div>
+          </div>
+        ))}
+
+        {coaches.length === 0 && (
+          <p className="col-span-full text-center text-gray-400 py-12">No coaching staff on file.</p>
+        )}
+      </div>
+    </div>
+  )
+}

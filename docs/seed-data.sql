@@ -4,6 +4,7 @@
 DELETE FROM results;
 DELETE FROM athletes;
 DELETE FROM meets;
+DELETE FROM coaches;
 
 -- Athletes (17 Jones County runners)
 INSERT INTO athletes (id, name, gender, grade, personal_record, events) VALUES
@@ -129,3 +130,11 @@ INSERT INTO results (athlete_id, meet_id, time, place) VALUES
 (11, 5, '21:12', 14),
 (16, 5, '21:42', 18),
 (17, 5, '20:52', 10);
+
+-- Coaches (5 staff)
+INSERT INTO coaches (id, name, title, bio) VALUES
+(1, 'Geoff Moore', 'Head Coach', 'Dedicated to developing young athletes and building a championship program.'),
+(2, 'Jason Waters', 'Assistant Coach', 'Focuses on meet-day strategy and race preparation.'),
+(3, 'Tommy Robinson', 'Assistant Coach', 'Specializes in strength training and injury prevention.'),
+(4, 'Gunner Kent', 'Assistant Coach', 'Oversees JV development and freshman integration.'),
+(5, 'Meddie Fuller', 'Assistant Coach - Administration', 'Handles scheduling, communications, and team logistics.');
