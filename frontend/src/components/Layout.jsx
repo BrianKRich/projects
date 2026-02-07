@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Outlet, NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 const navLinks = [
@@ -31,6 +31,33 @@ function mobileLinkClass({ isActive }) {
 export default function Layout() {
   const { isAdmin, logout } = useAuth()
   const [menuOpen, setMenuOpen] = useState(false)
+  const location = useLocation()
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false)
+  }, [location.pathname])
+
+  // Close menu on Escape key
+  useEffect(() => {
+    function handleEscape(e) {
+      if (e.key === 'Escape' && menuOpen) {
+        setMenuOpen(false)
+      }
+    }
+    window.addEventListener('keydown', handleEscape)
+    return () => window.removeEventListener('keydown', handleEscape)
+  }, [menuOpen])
+
+  // Prevent background scroll when menu is open
+  useEffect(() => {
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = 'unset'
+    }
+    return () => { document.body.style.overflow = 'unset' }
+  }, [menuOpen])
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
@@ -82,12 +109,13 @@ export default function Layout() {
                   <span className="text-[#FFD700] text-base font-bold">Greyhounds</span>
                 </NavLink>
                 <button
-                  className="text-white focus-visible:outline-[#FFD700]"
+                  className="text-white focus-visible:outline-[#FFD700] p-2 -mr-2"
                   onClick={() => setMenuOpen(!menuOpen)}
                   aria-label={menuOpen ? 'Close menu' : 'Open menu'}
                   aria-expanded={menuOpen}
+                  aria-controls="mobile-menu"
                 >
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     {menuOpen ? (
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                     ) : (
@@ -102,7 +130,7 @@ export default function Layout() {
 
         {/* Mobile menu */}
         {menuOpen && (
-          <nav className="md:hidden px-4 pb-4 flex flex-col gap-1" aria-label="Mobile navigation">
+          <nav id="mobile-menu" className="md:hidden px-4 pb-4 flex flex-col gap-1 bg-[#4D007B]" aria-label="Mobile navigation">
             {navLinks.map(({ to, label, icon }) => (
               <NavLink key={to} to={to} end={to === '/'} className={mobileLinkClass} onClick={() => setMenuOpen(false)}>
                 <span aria-hidden="true">{icon} </span>{label}

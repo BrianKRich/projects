@@ -24,8 +24,8 @@ export default function Meets() {
       .catch(err => { setError(err.message); setLoading(false) })
   }, [])
 
-  if (loading) return <div className="text-center py-12 text-gray-500">Loading meets...</div>
-  if (error) return <div className="text-center py-12 text-red-500">Error: {error}</div>
+  if (loading) return <div role="status" className="text-center py-12 text-gray-600">Loading meets...</div>
+  if (error) return <div role="alert" className="text-center py-12 text-red-600">Error: {error}</div>
 
   return (
     <div>
@@ -36,13 +36,13 @@ export default function Meets() {
           <Link
             key={meet.id}
             to={`/meets/${meet.id}`}
-            aria-label={`View results for ${meet.name}`}
-            className="bg-white rounded-xl shadow p-3 sm:p-5 hover:shadow-md transition border-l-4 border-[#4D007B]"
+            aria-label={`View results for ${meet.name} on ${formatDate(meet.date)}`}
+            className="block bg-white rounded-xl shadow p-3 sm:p-5 hover:shadow-md transition border-l-4 border-[#4D007B] focus-visible:outline-2 focus-visible:outline-[#FFD700]"
           >
             <h2 className="text-xl font-bold text-[#4D007B]">{meet.name}</h2>
-            <p className="text-gray-500 mt-1">{formatDate(meet.date)}</p>
-            {meet.location && <p className="text-gray-400 text-sm mt-0.5">{meet.location}</p>}
-            {meet.description && <p className="text-gray-500 text-sm mt-2">{meet.description}</p>}
+            <p className="text-gray-600 mt-1">{formatDate(meet.date)}</p>
+            {meet.location && <p className="text-gray-600 text-sm mt-0.5">{meet.location}</p>}
+            {meet.description && <p className="text-gray-700 text-sm mt-2">{meet.description}</p>}
           </Link>
         ))}
 

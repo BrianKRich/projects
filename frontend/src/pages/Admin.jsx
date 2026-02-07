@@ -35,10 +35,10 @@ function TabBar({ active, onChange }) {
           id={`admin-${t}-tab`}
           onClick={() => onChange(t)}
           className={
-            'px-2 py-1 sm:px-4 sm:py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors ' +
+            'px-3 py-2 sm:px-4 sm:py-2 rounded-lg text-sm font-semibold transition-colors min-h-[44px] ' +
             (active === t
-              ? 'bg-[#4D007B] text-white focus-visible:outline-[#FFD700]'
-              : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50')
+              ? 'bg-[#4D007B] text-white focus-visible:outline-2 focus-visible:outline-[#FFD700]'
+              : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50')
           }
         >
           {t}

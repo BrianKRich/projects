@@ -11,21 +11,21 @@ function RosterTable({ title, subtitle, rows }) {
           <caption className="sr-only">{title} roster</caption>
           <thead>
             <tr className="bg-[#4D007B] text-white">
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Name</th>
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Gender</th>
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Grade</th>
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">PR</th>
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Events</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Name</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Gender</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Grade</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">PR</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Events</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {rows.map(a => (
               <tr key={a.id} className="hover:bg-gray-50 transition-colors">
-                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-medium text-gray-900">{a.name}</td>
-                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{a.gender === 'M' ? 'Boys' : 'Girls'}</td>
-                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500">{a.grade}</td>
-                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500">{a.personal_record || '—'}</td>
-                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{a.events || '—'}</td>
+                <th scope="row" className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-medium text-gray-900 text-left">{a.name}</th>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-700 hidden sm:table-cell">{a.gender === 'M' ? 'Boys' : 'Girls'}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-700">{a.grade}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-700">{a.personal_record || '—'}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-700 hidden sm:table-cell">{a.events || '—'}</td>
               </tr>
             ))}
             {rows.length === 0 && (
@@ -90,10 +90,10 @@ export default function Athletes() {
               onClick={() => setGender(opt)}
               aria-pressed={gender === opt}
               className={
-                'px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg font-medium transition-colors ' +
+                'px-4 py-2 rounded-lg font-medium transition-colors min-h-[44px] ' +
                 (gender === opt
                   ? 'bg-[#FFD700] text-[#4D007B]'
-                  : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50')
+                  : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50')
               }
             >
               {opt}
@@ -105,7 +105,7 @@ export default function Athletes() {
       <RosterTable title="Varsity" subtitle="Grades 11 & 12" rows={varsity} />
       <RosterTable title="Junior Varsity" subtitle="Grades 9 & 10" rows={jv} />
 
-      <p className="mt-4 text-sm text-gray-400 text-center">
+      <p className="mt-4 text-sm text-gray-600 text-center" role="status" aria-live="polite">
         Showing {filtered.length} of {athletes.length} athletes
       </p>
     </div>

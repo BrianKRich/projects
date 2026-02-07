@@ -37,15 +37,16 @@ export default function Home() {
       {/* Upcoming Meets */}
       <div className="mb-8">
         <h2 className="text-2xl font-bold text-[#4D007B] mb-3">📅 Upcoming Meets</h2>
-        <div className="bg-white rounded-xl shadow overflow-x-auto">
+        <div className="bg-white rounded-xl shadow overflow-x-auto relative">
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none hidden sm:block" aria-hidden="true"></div>
           <table className="min-w-full">
             <caption className="sr-only">Upcoming meet schedule</caption>
             <thead>
               <tr className="bg-[#4D007B] text-white">
-                <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Meet</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Level</th>
-                <th className="px-4 py-3 text-left text-sm font-semibold">Location</th>
+                <th scope="col" className="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                <th scope="col" className="px-4 py-3 text-left text-sm font-semibold">Meet</th>
+                <th scope="col" className="px-4 py-3 text-left text-sm font-semibold">Level</th>
+                <th scope="col" className="px-4 py-3 text-left text-sm font-semibold">Location</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -58,7 +59,7 @@ export default function Home() {
                       {m.level}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-sm text-gray-500">{m.location || '—'}</td>
+                  <td className="px-4 py-3 text-sm text-gray-700">{m.location || '—'}</td>
                 </tr>
               ))}
               {futureMeets.length === 0 && (

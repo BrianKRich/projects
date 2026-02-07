@@ -75,12 +75,13 @@ export default function Rankings() {
             aria-selected={activeTab === tab}
             aria-controls={`rankings-${tab}-panel`}
             id={`rankings-${tab}-tab`}
+            tabIndex={activeTab === tab ? 0 : -1}
             onClick={() => setActiveTab(tab)}
             className={
-              'px-4 py-1.5 sm:px-6 sm:py-2 rounded-lg font-semibold transition-colors ' +
+              'px-6 py-3 rounded-lg font-semibold transition-colors min-h-[44px] ' +
               (activeTab === tab
                 ? 'bg-[#FFD700] text-[#4D007B]'
-                : 'bg-white border border-gray-300 text-gray-600 hover:bg-gray-50')
+                : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50')
             }
           >
             {tab}
@@ -105,13 +106,13 @@ export default function Rankings() {
           <tbody className="divide-y divide-gray-100">
             {rows.map((r, i) => (
               <tr key={r.athlete.id} className="hover:bg-gray-50">
-                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-bold text-gray-900">
+                <th scope="row" className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-bold text-gray-900 text-left">
                   {i === 0 ? <span aria-label="1st place">🥇</span> : i === 1 ? <span aria-label="2nd place">🥈</span> : i === 2 ? <span aria-label="3rd place">🥉</span> : i + 1}
-                </td>
+                </th>
                 <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-medium text-gray-900">{r.athlete.name}</td>
-                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{r.athlete.grade}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-700 hidden sm:table-cell">{r.athlete.grade}</td>
                 <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-semibold text-[#4D007B]">{r.bestTime}</td>
-                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{r.meetName}</td>
+                <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-700 hidden sm:table-cell">{r.meetName}</td>
               </tr>
             ))}
             {rows.length === 0 && (

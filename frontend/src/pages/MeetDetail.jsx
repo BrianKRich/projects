@@ -56,15 +56,16 @@ export default function MeetDetail() {
     return (
       <div>
         <h2 className="text-lg font-semibold text-[#4D007B] mb-2">{title}</h2>
-        <div className="bg-white rounded-xl shadow overflow-x-auto">
+        <div className="bg-white rounded-xl shadow overflow-x-auto relative">
+          <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent pointer-events-none hidden sm:block" aria-hidden="true"></div>
           <table className="min-w-full">
             <caption className="sr-only">{title}</caption>
             <thead>
               <tr className="bg-[#4D007B] text-white">
-                <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Place</th>
-                <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Athlete</th>
-                <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Grade</th>
-                <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Time</th>
+                <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Place</th>
+                <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Athlete</th>
+                <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Grade</th>
+                <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Time</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -72,10 +73,10 @@ export default function MeetDetail() {
                 const athlete = athleteMap[r.athleteId]
                 return (
                   <tr key={r.id} className="hover:bg-gray-50">
-                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-bold text-gray-900">{r.place}</td>
+                    <th scope="row" className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-bold text-gray-900 text-left">{r.place}</th>
                     <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-900">{athlete?.name || '—'}</td>
-                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{athlete?.grade || '—'}</td>
-                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500">{r.time}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-700 hidden sm:table-cell">{athlete?.grade || '—'}</td>
+                    <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-700">{r.time}</td>
                   </tr>
                 )
               })}

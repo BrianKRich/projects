@@ -13,8 +13,8 @@ export default function Coaches() {
       .catch(err => { setError(err.message); setLoading(false) })
   }, [])
 
-  if (loading) return <div role="status" className="text-center py-12 text-gray-500">Loading coaching staff...</div>
-  if (error) return <div role="alert" className="text-center py-12 text-red-500">Error: {error}</div>
+  if (loading) return <div role="status" className="text-center py-12 text-gray-600">Loading coaching staff...</div>
+  if (error) return <div role="alert" className="text-center py-12 text-red-600">Error: {error}</div>
 
   return (
     <div>
@@ -23,14 +23,14 @@ export default function Coaches() {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {coaches.map(coach => (
-          <div key={coach.id} className="bg-white rounded-xl shadow overflow-hidden">
-            <div className="h-2 bg-[#4D007B]" />
+          <article key={coach.id} className="bg-white rounded-xl shadow overflow-hidden">
+            <div className="h-2 bg-[#4D007B]" aria-hidden="true" />
             <div className="p-4 sm:p-6">
               <h2 className="text-xl font-bold text-gray-900">{coach.name}</h2>
-              <p className="text-[#FFD700] font-semibold text-sm mt-0.5">{coach.title}</p>
-              {coach.bio && <p className="text-gray-500 text-sm mt-3">{coach.bio}</p>}
+              <p className="text-[#FFD700] font-semibold text-sm mt-0.5" role="text">{coach.title}</p>
+              {coach.bio && <p className="text-gray-700 text-sm mt-3 line-clamp-4">{coach.bio}</p>}
             </div>
-          </div>
+          </article>
         ))}
 
         {coaches.length === 0 && (
