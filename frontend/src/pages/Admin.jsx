@@ -1,17 +1,35 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useApi } from '../hooks/useApi'
 
 // ─── Shared helpers ────────────────────────────────────────────
 
-const TABS = ['Athletes', 'Meets', 'Results', 'Coaches']
+const TABS = ['Athletes', 'Meets', 'Results', 'Coaches', 'Future Meets']
 
 function TabBar({ active, onChange }) {
+  const listRef = useRef(null)
+
+  function handleKeyDown(e) {
+    const tabs = [...listRef.current.querySelectorAll('[role="tab"]')]
+    const idx = tabs.indexOf(e.target)
+    let next = -1
+    if (e.key === 'ArrowRight') next = (idx + 1) % tabs.length
+    else if (e.key === 'ArrowLeft') next = (idx - 1 + tabs.length) % tabs.length
+    else if (e.key === 'Home') next = 0
+    else if (e.key === 'End') next = tabs.length - 1
+    if (next >= 0) {
+      e.preventDefault()
+      tabs[next].focus()
+      onChange(TABS[next])
+    }
+  }
+
   return (
-    <div role="tablist" aria-label="Admin sections" className="flex gap-1 mb-6 flex-wrap">
+    <div role="tablist" aria-label="Admin sections" className="flex gap-1 mb-6 flex-wrap" ref={listRef} onKeyDown={handleKeyDown}>
       {TABS.map(t => (
         <button
           key={t}
           role="tab"
+          tabIndex={active === t ? 0 : -1}
           aria-selected={active === t}
           aria-controls={`admin-${t}-panel`}
           id={`admin-${t}-tab`}
@@ -43,24 +61,24 @@ function AthleteForm({ initial, onSave, onCancel }) {
   return (
     <tr className="bg-yellow-50">
       <td className="px-3 py-2">
-        <input value={form.name} onChange={set('name')} placeholder="Name" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Athlete name" value={form.name} onChange={set('name')} placeholder="Name" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2">
-        <select value={form.gender} onChange={set('gender')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
+        <select aria-label="Gender" value={form.gender} onChange={set('gender')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
           <option value="M">Boys</option>
           <option value="F">Girls</option>
         </select>
       </td>
       <td className="px-3 py-2">
-        <select value={form.grade} onChange={set('grade')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
+        <select aria-label="Grade" value={form.grade} onChange={set('grade')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
           {[9, 10, 11, 12].map(g => <option key={g} value={g}>{g}</option>)}
         </select>
       </td>
       <td className="px-3 py-2">
-        <input value={form.personal_record} onChange={set('personal_record')} placeholder="e.g. 17:22" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Personal record" value={form.personal_record} onChange={set('personal_record')} placeholder="e.g. 17:22" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2">
-        <input value={form.events} onChange={set('events')} placeholder="e.g. 5K Varsity" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Events" value={form.events} onChange={set('events')} placeholder="e.g. 5K Varsity" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2 flex gap-2">
         <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
@@ -157,16 +175,16 @@ function MeetForm({ initial, onSave, onCancel }) {
   return (
     <tr className="bg-yellow-50">
       <td className="px-3 py-2">
-        <input value={form.name} onChange={set('name')} placeholder="Meet name" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Meet name" value={form.name} onChange={set('name')} placeholder="Meet name" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2">
-        <input type="date" value={form.date} onChange={set('date')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Meet date" type="date" value={form.date} onChange={set('date')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2">
-        <input value={form.location} onChange={set('location')} placeholder="Location" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Location" value={form.location} onChange={set('location')} placeholder="Location" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2">
-        <input value={form.description} onChange={set('description')} placeholder="Description" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Description" value={form.description} onChange={set('description')} placeholder="Description" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2 flex gap-2">
         <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
@@ -257,22 +275,22 @@ function ResultForm({ initial, athletes, meets, onSave, onCancel }) {
   return (
     <tr className="bg-yellow-50">
       <td className="px-3 py-2">
-        <select value={form.athleteId} onChange={set('athleteId')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
+        <select aria-label="Athlete" value={form.athleteId} onChange={set('athleteId')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
           <option value="">Select athlete</option>
           {athletes.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
         </select>
       </td>
       <td className="px-3 py-2">
-        <select value={form.meetId} onChange={set('meetId')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
+        <select aria-label="Meet" value={form.meetId} onChange={set('meetId')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
           <option value="">Select meet</option>
           {meets.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
         </select>
       </td>
       <td className="px-3 py-2">
-        <input value={form.time} onChange={set('time')} placeholder="MM:SS" className="w-24 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Time" value={form.time} onChange={set('time')} placeholder="MM:SS" className="w-24 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2">
-        <input type="number" value={form.place} onChange={set('place')} placeholder="Place" className="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Place" type="number" value={form.place} onChange={set('place')} placeholder="Place" className="w-20 border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2 flex gap-2">
         <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
@@ -382,13 +400,13 @@ function CoachForm({ initial, onSave, onCancel }) {
   return (
     <tr className="bg-yellow-50">
       <td className="px-3 py-2">
-        <input value={form.name} onChange={set('name')} placeholder="Name" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Coach name" value={form.name} onChange={set('name')} placeholder="Name" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2">
-        <input value={form.title} onChange={set('title')} placeholder="Title" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Title" value={form.title} onChange={set('title')} placeholder="Title" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2">
-        <input value={form.bio} onChange={set('bio')} placeholder="Bio" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+        <input aria-label="Bio" value={form.bio} onChange={set('bio')} placeholder="Bio" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
       </td>
       <td className="px-3 py-2 flex gap-2">
         <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
@@ -468,6 +486,117 @@ function CoachesTab() {
   )
 }
 
+// ─── Future Meets tab ──────────────────────────────────────────
+
+function emptyFutureMeet() {
+  return { name: '', date: '', location: '', level: 'Varsity' }
+}
+
+function FutureMeetForm({ initial, onSave, onCancel }) {
+  const [form, setForm] = useState(initial)
+  const set = (k) => (e) => setForm({ ...form, [k]: e.target.value })
+
+  return (
+    <tr className="bg-yellow-50">
+      <td className="px-3 py-2">
+        <input aria-label="Meet name" value={form.name} onChange={set('name')} placeholder="Meet name" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+      </td>
+      <td className="px-3 py-2">
+        <input aria-label="Meet date" type="date" value={form.date} onChange={set('date')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+      </td>
+      <td className="px-3 py-2">
+        <input aria-label="Location" value={form.location} onChange={set('location')} placeholder="Location" className="w-full border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]" />
+      </td>
+      <td className="px-3 py-2">
+        <select aria-label="Level" value={form.level} onChange={set('level')} className="border border-gray-300 rounded px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#4D007B]">
+          <option value="Varsity">Varsity</option>
+          <option value="JV">JV</option>
+        </select>
+      </td>
+      <td className="px-3 py-2 flex gap-2">
+        <button onClick={() => onSave(form)} className="px-3 py-1 bg-[#4D007B] text-white rounded text-xs font-semibold hover:bg-[#3a0059] focus-visible:outline-[#FFD700]">Save</button>
+        <button onClick={onCancel} className="px-3 py-1 bg-gray-200 text-gray-600 rounded text-xs font-semibold hover:bg-gray-300">Cancel</button>
+      </td>
+    </tr>
+  )
+}
+
+function FutureMeetsTab() {
+  const api = useApi()
+  const [meets, setMeets] = useState([])
+  const [adding, setAdding] = useState(false)
+  const [editId, setEditId] = useState(null)
+
+  const load = useCallback(() => {
+    api.get('/api/future-meets').then(setMeets).catch(() => {})
+  }, [])
+
+  useEffect(() => { load() }, [load])
+
+  async function handleAdd(form) {
+    await api.post('/api/future-meets', form)
+    setAdding(false)
+    load()
+  }
+
+  async function handleEdit(id, form) {
+    await api.put(`/api/future-meets?id=${id}`, form)
+    setEditId(null)
+    load()
+  }
+
+  async function handleDelete(id) {
+    if (!confirm('Delete this future meet?')) return
+    await api.del(`/api/future-meets?id=${id}`)
+    load()
+  }
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-3">
+        <h2 className="text-lg font-bold text-gray-800">Future Meets</h2>
+        <button onClick={() => setAdding(true)} className="px-4 py-1.5 bg-[#FFD700] text-[#4D007B] rounded-lg text-sm font-semibold hover:bg-[#e6c200]">+ Add Future Meet</button>
+      </div>
+      <div className="bg-white rounded-xl shadow overflow-x-auto">
+        <table className="min-w-full text-left">
+          <thead>
+            <tr className="bg-[#4D007B] text-white">
+              <th className="px-3 py-2 text-sm font-semibold">Name</th>
+              <th className="px-3 py-2 text-sm font-semibold">Date</th>
+              <th className="px-3 py-2 text-sm font-semibold">Location</th>
+              <th className="px-3 py-2 text-sm font-semibold">Level</th>
+              <th className="px-3 py-2 text-sm font-semibold">Actions</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {adding && <FutureMeetForm initial={emptyFutureMeet()} onSave={handleAdd} onCancel={() => setAdding(false)} />}
+            {meets.map(m =>
+              editId === m.id
+                ? <FutureMeetForm key={m.id} initial={m} onSave={(form) => handleEdit(m.id, form)} onCancel={() => setEditId(null)} />
+                : (
+                  <tr key={m.id} className="hover:bg-gray-50">
+                    <td className="px-3 py-2 text-sm text-gray-900">{m.name}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500">{m.date}</td>
+                    <td className="px-3 py-2 text-sm text-gray-500">{m.location || '—'}</td>
+                    <td className="px-3 py-2 text-sm">
+                      <span className={`px-2 py-0.5 rounded text-xs font-semibold ${m.level === 'Varsity' ? 'bg-[#4D007B] text-white' : 'bg-[#FFD700] text-[#4D007B]'}`}>
+                        {m.level}
+                      </span>
+                    </td>
+                    <td className="px-3 py-2 flex gap-2">
+                      <button onClick={() => setEditId(m.id)} aria-label={`Edit future meet ${m.name}`} className="text-xs px-2 py-1 bg-gray-100 rounded hover:bg-gray-200 text-gray-700">Edit</button>
+                      <button onClick={() => handleDelete(m.id)} aria-label={`Delete future meet ${m.name}`} className="text-xs px-2 py-1 bg-red-100 rounded hover:bg-red-200 text-red-600">Delete</button>
+                    </td>
+                  </tr>
+                )
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  )
+}
+
 // ─── Admin page root ───────────────────────────────────────────
 
 export default function Admin() {
@@ -482,6 +611,7 @@ export default function Admin() {
       {activeTab === 'Meets' && <div role="tabpanel" id="admin-Meets-panel" aria-labelledby="admin-Meets-tab"><MeetsTab /></div>}
       {activeTab === 'Results' && <div role="tabpanel" id="admin-Results-panel" aria-labelledby="admin-Results-tab"><ResultsTab /></div>}
       {activeTab === 'Coaches' && <div role="tabpanel" id="admin-Coaches-panel" aria-labelledby="admin-Coaches-tab"><CoachesTab /></div>}
+      {activeTab === 'Future Meets' && <div role="tabpanel" id="admin-Future Meets-panel" aria-labelledby="admin-Future Meets-tab"><FutureMeetsTab /></div>}
     </div>
   )
 }

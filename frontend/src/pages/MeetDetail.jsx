@@ -44,8 +44,8 @@ export default function MeetDetail() {
       .catch(err => { setError(err.message); setLoading(false) })
   }, [meetId])
 
-  if (loading) return <div className="text-center py-12 text-gray-500">Loading meet details...</div>
-  if (error) return <div className="text-center py-12 text-red-500">Error: {error}</div>
+  if (loading) return <div role="status" className="text-center py-12 text-gray-500">Loading meet details...</div>
+  if (error) return <div role="alert" className="text-center py-12 text-red-500">Error: {error}</div>
 
   // Split results by gender based on athlete lookup
   const boysResults = results.filter(r => athleteMap[r.athleteId]?.gender === 'M')

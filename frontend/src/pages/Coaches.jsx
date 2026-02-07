@@ -13,8 +13,8 @@ export default function Coaches() {
       .catch(err => { setError(err.message); setLoading(false) })
   }, [])
 
-  if (loading) return <div className="text-center py-12 text-gray-500">Loading coaching staff...</div>
-  if (error) return <div className="text-center py-12 text-red-500">Error: {error}</div>
+  if (loading) return <div role="status" className="text-center py-12 text-gray-500">Loading coaching staff...</div>
+  if (error) return <div role="alert" className="text-center py-12 text-red-500">Error: {error}</div>
 
   return (
     <div>

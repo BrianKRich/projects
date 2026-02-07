@@ -62,6 +62,14 @@ type Coach struct {
 	Bio   string `json:"bio,omitempty"`
 }
 
+type FutureMeet struct {
+	ID       int    `json:"id"`
+	Name     string `json:"name"`
+	Date     string `json:"date"`
+	Location string `json:"location,omitempty"`
+	Level    string `json:"level"`
+}
+
 type LoginRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
@@ -191,6 +199,7 @@ func main() {
 	http.HandleFunc("/api/meets", corsMiddleware(methodGateHandler(meetsHandler)))
 	http.HandleFunc("/api/results", corsMiddleware(methodGateHandler(resultsHandler)))
 	http.HandleFunc("/api/coaches", corsMiddleware(methodGateHandler(coachesHandler)))
+	http.HandleFunc("/api/future-meets", corsMiddleware(methodGateHandler(futureMeetsHandler)))
 
 	// Serve static frontend files
 	frontendDist := "../frontend/dist"
@@ -657,6 +666,107 @@ func coachesHandler(w http.ResponseWriter, r *http.Request) {
 		}
 		if result.RowsAffected() == 0 {
 			http.Error(w, "Coach not found", http.StatusNotFound)
+			return
+		}
+		w.WriteHeader(http.StatusNoContent)
+
+	default:
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+	}
+}
+
+// --- Future Meets ---
+
+func futureMeetsHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	switch r.Method {
+	case http.MethodGet:
+		rows, err := db.Query(context.Background(),
+			`SELECT id, name, date, COALESCE(location, ''), level FROM future_meets ORDER BY date ASC, CASE WHEN level = 'Varsity' THEN 0 ELSE 1 END`)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		defer rows.Close()
+
+		meets := []FutureMeet{}
+		for rows.Next() {
+			var fm FutureMeet
+			var date time.Time
+			if err := rows.Scan(&fm.ID, &fm.Name, &date, &fm.Location, &fm.Level); err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			fm.Date = date.Format("2006-01-02")
+			meets = append(meets, fm)
+		}
+		json.NewEncoder(w).Encode(meets)
+
+	case http.MethodPost:
+		var fm FutureMeet
+		if err := json.NewDecoder(r.Body).Decode(&fm); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		err := db.QueryRow(context.Background(),
+			"INSERT INTO future_meets (name, date, location, level) VALUES ($1, $2, $3, $4) RETURNING id",
+			fm.Name, fm.Date, fm.Location, fm.Level).Scan(&fm.ID)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(fm)
+
+	case http.MethodPut:
+		idStr := r.URL.Query().Get("id")
+		if idStr == "" {
+			http.Error(w, "ID parameter required", http.StatusBadRequest)
+			return
+		}
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
+		var fm FutureMeet
+		if err := json.NewDecoder(r.Body).Decode(&fm); err != nil {
+			http.Error(w, err.Error(), http.StatusBadRequest)
+			return
+		}
+		result, err := db.Exec(context.Background(),
+			"UPDATE future_meets SET name=$1, date=$2, location=$3, level=$4 WHERE id=$5",
+			fm.Name, fm.Date, fm.Location, fm.Level, id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if result.RowsAffected() == 0 {
+			http.Error(w, "Future meet not found", http.StatusNotFound)
+			return
+		}
+		fm.ID = id
+		json.NewEncoder(w).Encode(fm)
+
+	case http.MethodDelete:
+		idStr := r.URL.Query().Get("id")
+		if idStr == "" {
+			http.Error(w, "ID parameter required", http.StatusBadRequest)
+			return
+		}
+		id, err := strconv.Atoi(idStr)
+		if err != nil {
+			http.Error(w, "Invalid ID format", http.StatusBadRequest)
+			return
+		}
+		result, err := db.Exec(context.Background(), "DELETE FROM future_meets WHERE id = $1", id)
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		if result.RowsAffected() == 0 {
+			http.Error(w, "Future meet not found", http.StatusNotFound)
 			return
 		}
 		w.WriteHeader(http.StatusNoContent)

@@ -57,8 +57,8 @@ export default function Rankings() {
       .catch(err => { setError(err.message); setLoading(false) })
   }, [])
 
-  if (loading) return <div className="text-center py-12 text-gray-500">Computing rankings...</div>
-  if (error) return <div className="text-center py-12 text-red-500">Error: {error}</div>
+  if (loading) return <div role="status" className="text-center py-12 text-gray-500">Computing rankings...</div>
+  if (error) return <div role="alert" className="text-center py-12 text-red-500">Error: {error}</div>
 
   const rows = activeTab === 'Boys' ? boys : girls
 
@@ -95,18 +95,18 @@ export default function Rankings() {
           <caption className="sr-only">{activeTab} rankings by best time</caption>
           <thead>
             <tr className="bg-[#4D007B] text-white">
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Rank</th>
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Name</th>
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Grade</th>
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Best Time</th>
-              <th className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Meet</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Rank</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Name</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Grade</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold">Best Time</th>
+              <th scope="col" className="px-2 sm:px-6 py-2 sm:py-3 text-left text-sm font-semibold hidden sm:table-cell">Meet</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {rows.map((r, i) => (
               <tr key={r.athlete.id} className="hover:bg-gray-50">
                 <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-bold text-gray-900">
-                  {i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : i + 1}
+                  {i === 0 ? <span aria-label="1st place">🥇</span> : i === 1 ? <span aria-label="2nd place">🥈</span> : i === 2 ? <span aria-label="3rd place">🥉</span> : i + 1}
                 </td>
                 <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm font-medium text-gray-900">{r.athlete.name}</td>
                 <td className="px-2 sm:px-6 py-2 sm:py-3 text-sm text-gray-500 hidden sm:table-cell">{r.athlete.grade}</td>

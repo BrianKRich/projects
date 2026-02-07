@@ -5,6 +5,7 @@ DELETE FROM results;
 DELETE FROM athletes;
 DELETE FROM meets;
 DELETE FROM coaches;
+DELETE FROM future_meets;
 
 -- Athletes (17 Jones County runners)
 INSERT INTO athletes (id, name, gender, grade, personal_record, events) VALUES
@@ -138,3 +139,16 @@ INSERT INTO coaches (id, name, title, bio) VALUES
 (3, 'Marcus Tate', 'Assistant Coach', 'Specializes in strength training and injury prevention.'),
 (4, 'Linda Harrow', 'Assistant Coach', 'Oversees JV development and freshman integration.'),
 (5, 'Kevin Brandt', 'Assistant Coach - Administration', 'Handles scheduling, communications, and team logistics.');
+
+-- Future Meets (upcoming schedule — Varsity & JV)
+INSERT INTO future_meets (id, name, date, location, level) VALUES
+(1, 'Spring Invitational', '2026-03-14', 'Gray, GA', 'Varsity'),
+(2, 'Summer Training Meet', '2026-06-20', 'Macon, GA', 'Varsity'),
+(3, 'Season Opener', '2026-08-22', 'Gray, GA', 'Varsity'),
+(4, 'Jones County Invitational', '2026-09-12', 'Gray, GA', 'Varsity'),
+(5, 'Peach State Classic', '2026-09-26', 'Carrollton, GA', 'Varsity'),
+(6, 'Spring Invitational', '2026-03-14', 'Gray, GA', 'JV'),
+(7, 'Summer Training Meet', '2026-06-20', 'Macon, GA', 'JV'),
+(8, 'Season Opener', '2026-08-22', 'Gray, GA', 'JV'),
+(9, 'Jones County Invitational', '2026-09-12', 'Gray, GA', 'JV'),
+(10, 'Peach State Classic', '2026-09-26', 'Carrollton, GA', 'JV');

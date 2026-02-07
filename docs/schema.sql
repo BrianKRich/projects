@@ -41,6 +41,16 @@ CREATE TABLE coaches (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Future meets table
+CREATE TABLE future_meets (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    date DATE NOT NULL,
+    location VARCHAR(100),
+    level VARCHAR(20) NOT NULL DEFAULT 'Varsity',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Create indexes
 CREATE INDEX idx_results_athlete ON results(athlete_id);
 CREATE INDEX idx_results_meet ON results(meet_id);

@@ -1,15 +1,27 @@
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { useApi } from '../hooks/useApi'
+
+function formatDate(dateStr) {
+  const [y, m, d] = dateStr.split('-').map(Number)
+  return new Date(y, m - 1, d).toLocaleDateString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
 
 export default function Home() {
+  const { get } = useApi()
+  const [futureMeets, setFutureMeets] = useState([])
+
+  useEffect(() => {
+    get('/api/future-meets').then(setFutureMeets).catch(() => {})
+  }, [])
 
   return (
     <div>
-      {/* Logo */}
-      <div className="flex justify-center mb-4">
-        <img src="/jc-logo.jpg" alt="Jones County Cross Country" className="w-[36rem] sm:w-[48rem] max-w-full" />
-      </div>
-      <div className="w-full h-px bg-[#d4b5e8] mb-4" />
-
       {/* Hero */}
       <div className="bg-[#4D007B] rounded-xl text-white text-center py-10 sm:py-16 px-4 sm:px-6 mb-8">
         <h1 className="text-2xl sm:text-5xl font-bold mb-3">Jones County Greyhounds</h1>
@@ -21,6 +33,43 @@ export default function Home() {
         alt="Jones County Greyhounds cross country team"
         className="w-full h-64 sm:h-80 object-cover object-[center_56%] rounded-xl shadow-lg mb-8"
       />
+
+      {/* Upcoming Meets */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-[#4D007B] mb-3">📅 Upcoming Meets</h2>
+        <div className="bg-white rounded-xl shadow overflow-x-auto">
+          <table className="min-w-full">
+            <caption className="sr-only">Upcoming meet schedule</caption>
+            <thead>
+              <tr className="bg-[#4D007B] text-white">
+                <th className="px-4 py-3 text-left text-sm font-semibold">Date</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Meet</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Level</th>
+                <th className="px-4 py-3 text-left text-sm font-semibold">Location</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {futureMeets.map(m => (
+                <tr key={m.id} className="hover:bg-gray-50">
+                  <td className="px-4 py-3 text-sm text-gray-900 font-medium">{formatDate(m.date)}</td>
+                  <td className="px-4 py-3 text-sm text-[#4D007B] font-semibold">{m.name}</td>
+                  <td className="px-4 py-3 text-sm">
+                    <span className={`px-2 py-0.5 rounded text-xs font-semibold ${m.level === 'Varsity' ? 'bg-[#4D007B] text-white' : 'bg-[#FFD700] text-[#4D007B]'}`}>
+                      {m.level}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 text-sm text-gray-500">{m.location || '—'}</td>
+                </tr>
+              ))}
+              {futureMeets.length === 0 && (
+                <tr>
+                  <td colSpan={4} className="px-4 py-6 text-center text-gray-400">No upcoming meets scheduled.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
       {/* Achievement banner */}
       <div className="bg-[#FFD700] rounded-xl text-center py-4 sm:py-5 px-3 sm:px-6 mb-8">
@@ -61,7 +110,7 @@ export default function Home() {
         </div>
 
         <div className="bg-[#4D007B] rounded-lg text-center py-4 px-4 mt-5">
-          <h2 className="text-white font-bold text-lg sm:text-xl">🏆 DOMINATING REGION 4 AAAAA 🏆</h2>
+          <h3 className="text-white font-bold text-lg sm:text-xl">🏆 DOMINATING REGION 4 AAAAA 🏆</h3>
           <p className="text-white/90 text-sm sm:text-base mt-1">
             <span className="text-[#FFD700] font-semibold">16 Total Championships</span>
             {" • "}Both Teams FOUR-PEAT Champions (2022–2025){" • "}
