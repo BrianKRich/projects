@@ -55,19 +55,21 @@ jobs:
             -e "ssh -i ~/.ssh/lightsail.pem" \
             backend/server ubuntu@${{ secrets.LIGHTSAIL_HOST }}:~/projects/backend/
 
+      - name: Create startup script
+        run: |
+          ssh -i ~/.ssh/lightsail.pem ubuntu@${{ secrets.LIGHTSAIL_HOST }} 'cat > ~/projects/start-server.sh << '\''SCRIPT_EOF'\''
+          #!/bin/bash
+          export ADMIN_USERNAME="'"${{ secrets.ADMIN_USERNAME }}"'"
+          export ADMIN_PASSWORD="'"${{ secrets.ADMIN_PASSWORD }}"'"
+          export ADMIN_SECRET="'"${{ secrets.ADMIN_SECRET }}"'"
+
+          cd ~/projects/backend
+          nohup ./server > server.log 2>&1 &
+          SCRIPT_EOF'
+          ssh -i ~/.ssh/lightsail.pem ubuntu@${{ secrets.LIGHTSAIL_HOST }} 'chmod +x ~/projects/start-server.sh'
+
       - name: Restart application
         run: |
-          ssh -i ~/.ssh/lightsail.pem ubuntu@${{ secrets.LIGHTSAIL_HOST }} "cat > ~/projects/start-server.sh << 'SCRIPT_EOF'
-#!/bin/bash
-export ADMIN_USERNAME='${{ secrets.ADMIN_USERNAME }}'
-export ADMIN_PASSWORD='${{ secrets.ADMIN_PASSWORD }}'
-export ADMIN_SECRET='${{ secrets.ADMIN_SECRET }}'
-
-cd ~/projects/backend
-nohup ./server > server.log 2>&1 &
-SCRIPT_EOF
-chmod +x ~/projects/start-server.sh"
-
           ssh -i ~/.ssh/lightsail.pem ubuntu@${{ secrets.LIGHTSAIL_HOST }} << EOF
             # Ensure PostgreSQL is running
             sudo service postgresql start || true
