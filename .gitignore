@@ -26,3 +26,4 @@ CLAUDE.md
 
 # Logs
 *.log
+.admin-credentials
